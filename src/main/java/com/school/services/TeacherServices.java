@@ -1,39 +1,37 @@
 package com.school.services;
 
-import com.school.Repository.SubjectRepository;
 import com.school.Repository.TeacherRepository;
-import com.school.models.Subject;
 import com.school.models.Teacher;
+import com.school.utils.BaseControllerActions;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
-public class TeacherServices {
+@AllArgsConstructor
+public class TeacherServices extends BaseControllerActions{
     private final TeacherRepository teacherRepository;
-    private final SubjectRepository subjectRepository;
-    public TeacherServices(TeacherRepository teacherRepository, SubjectRepository subjectRepository) {
-        this.teacherRepository = teacherRepository;
-        this.subjectRepository = subjectRepository;
+
+    public Teacher saveTeacher(Teacher teacherRequest) {
+        List<String> requiredFields = new ArrayList<>();
+        requiredFields.add("name");
+        requires(requiredFields, teacherRequest);
+
+        String randomPassword = UUID.randomUUID().toString().replace("-", "").substring(0, 8);
+        teacherRequest.setPasswordHash(randomPassword);
+        if(teacherRepository.existsByPasswordHash(teacherRequest.getPasswordHash())) {
+            throw new IllegalArgumentException("Password already exists");
+        }
+
+        return teacherRepository.save(teacherRequest);
     }
 
-//    save Teacher
-    public Teacher saveTeacher(String name){
-        return teacherRepository.save(new Teacher(name));
-    }
-//    get all teachers
-    public List<Teacher> getAllTeacher(){
+    public List<Teacher> fetchAllTeachers() {
         return teacherRepository.findAll();
     }
 
-    public Teacher getTeacherById(Long id){
-        return teacherRepository.findById(id).orElseThrow(()-> new RuntimeException("Teacher Not Found"));
-    }
 
-    public Teacher assignTeacherToSubject(Long subjectId, Long teacherId){
-        Teacher teacher = getTeacherById(teacherId);
-        Subject subject = subjectRepository.findById(subjectId).orElseThrow(()-> new RuntimeException("Subject Not Found"));
-        teacher.addSubject(subject);
-        return teacherRepository.save(teacher);
-    }
 }

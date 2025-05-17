@@ -1,48 +1,38 @@
 package com.school.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
+@AllArgsConstructor
 @Entity
 public class Marks {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Double marks_obtained;
+    private Double marksObtained;
 
     @ManyToOne
     @JoinColumn(name = "student_id")
-    @JsonBackReference
     private Student student;
+
+    @ManyToOne
+    @JoinColumn(name = "exam_id")
+    private Exam exam;
+
+    @ManyToOne
+    @JoinColumn(name = "entered_by")
+    private Teacher enteredBy;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @ManyToOne
+    @JoinColumn(name = "subject_id")
+    private Subject subject;
 
     public Marks() {}
 
-    public Marks(Double marks_obtained, Student student) {
-        this.marks_obtained = marks_obtained;
-        this.student = student;
-    }
-
-    public Double getMarks_obtained() {
-        return marks_obtained;
-    }
-
-    public void setMarks_obtained(Double marks_obtained) {
-        this.marks_obtained = marks_obtained;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Student getStudent() {
-        return student;
-    }
-
-    public void setStudent(Student student) {
-        this.student = student;
-    }
 }

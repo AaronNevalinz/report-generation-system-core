@@ -3,36 +3,43 @@ package com.school.services;
 import com.school.Repository.ClassRepository;
 import com.school.Repository.ExamRepository;
 import com.school.Repository.SubjectRepository;
-import com.school.models.ClassEntity;
 import com.school.models.Exam;
-import com.school.models.Subject;
+import com.school.models.SchoolClass;
+import com.school.utils.BaseControllerActions;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class ExamService {
-    private ExamRepository examRepository;
-    private SubjectRepository subjectRepository;
-    private ClassRepository classRepository;
-    public ExamService(ExamRepository examRepository, SubjectRepository subjectRepository, ClassRepository classRepository) {
-        this.examRepository = examRepository;
-        this.subjectRepository = subjectRepository;
-        this.classRepository = classRepository;
+@AllArgsConstructor
+public class ExamService extends BaseControllerActions {
+    private final ExamRepository examRepository;
+    private final ClassRepository classRepository;
+    private final SubjectRepository subjectRepository;
+
+    public Exam SaveExam(Exam exam, Long classId) {
+        List<String> requiredFields = new ArrayList<>();
+        requiredFields.add("name");
+        requires(requiredFields, exam);
+
+        if(!classRepository.existsById(classId)) {
+            throw new IllegalArgumentException("classId does not exist");
+        }
+
+        SchoolClass schoolClass = classRepository.findById(classId).get();
+        exam.setClassEntity(schoolClass);
+        return examRepository.save(exam);
     }
-    public List<Exam> getExams() {
+    public List<Exam> getAllExams() {
         return examRepository.findAll();
     }
-    public Exam getExam(Long id) {
-        return examRepository.findById(id).get();
-    }
-    public Exam saveExam(Long classId, Long subjectId, String name) {
-        Subject subject = subjectRepository.findById(subjectId).get();
-        ClassEntity classEntity = classRepository.findById(classId).get();
-        return examRepository.save(new Exam(name, subject, classEntity));
-    }
 
-    public List<Exam> getExamBySubject(Long subjectId) {
-        return examRepository.findBySubject(subjectId);
+    public List<Exam> getExamByClassId(Long classId) {
+        if(!classRepository.existsById(classId)) {
+            throw new IllegalArgumentException("classId does not exist");
+        }
+        return examRepository.findByClassEntityId(classId);
     }
 }
