@@ -12,4 +12,6 @@ import java.util.List;
 public interface StudentRepository extends JpaRepository<Student, Long> {
     @Query("select s from Student s where s.classEntity.id = :classId")
     List<Student> findBySchoolClassId(@Param("classId") Long classId);
+
+    List<Student> findByClassEntityId(Long classId);
 }

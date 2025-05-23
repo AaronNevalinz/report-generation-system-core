@@ -17,8 +17,7 @@ public class MarksController {
     public OperationReturnObject addMarks(@RequestBody Marks marksRequest, @PathVariable Long exam_id, @RequestParam("studentId") Long studentId, @RequestParam("subjectId") Long subjectId) {
         Marks marks = marksService.saveMarks(marksRequest, exam_id, studentId, subjectId);
         OperationReturnObject operationReturnObject = new OperationReturnObject();
-        operationReturnObject.setCodeAndMessageAndReturnObject(200, "Added Student Marks", marks);
+        operationReturnObject.setCodeAndMessageAndReturnObject(201, "Added Student Marks", marks);
         return operationReturnObject;
     }
-
 }

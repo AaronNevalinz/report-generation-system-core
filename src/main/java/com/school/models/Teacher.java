@@ -26,7 +26,7 @@ public class Teacher {
     @OneToMany(mappedBy = "enteredBy", cascade = CascadeType.ALL)
     List<Marks> marks;
 
-    @OneToMany(mappedBy = "approvedBy", cascade = CascadeType.ALL)
-    List<Report> reports;
+//    @OneToMany(mappedBy = "approvedBy", cascade = CascadeType.ALL)
+//    List<Report> reports;
 
 }

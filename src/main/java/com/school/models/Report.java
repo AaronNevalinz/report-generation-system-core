@@ -1,72 +1,42 @@
 package com.school.models;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 public class Report {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reportId;
 
-    private LocalDateTime generatedAt;
-    private String status;
-    private String filePath;
+    private Double totalScore;
+    private Double average;
+    private String grade;
+    private Integer position;
+
+
+    @ManyToOne
+    @JoinColumn(name = "student_id")
+    private Student student;
 
     @ManyToOne
     @JoinColumn(name = "exam_id")
     private Exam exam;
 
     @ManyToOne
-    @JoinColumn(name = "approved_by")
-    private Teacher approvedBy;
+    @JoinColumn(name = "class_id")
+    private SchoolClass classEntity;
 
-    public Long getReportId() {
-        return reportId;
-    }
+    private LocalDate generatedAt = LocalDate.now();
 
-    public void setReportId(Long reportId) {
-        this.reportId = reportId;
-    }
 
-    public LocalDateTime getGeneratedAt() {
-        return generatedAt;
-    }
-
-    public void setGeneratedAt(LocalDateTime generatedAt) {
-        this.generatedAt = generatedAt;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getFilePath() {
-        return filePath;
-    }
-
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
-
-    public Exam getExam() {
-        return exam;
-    }
-
-    public void setExam(Exam exam) {
-        this.exam = exam;
-    }
-
-    public Teacher getApprovedBy() {
-        return approvedBy;
-    }
-
-    public void setApprovedBy(Teacher approvedBy) {
-        this.approvedBy = approvedBy;
-    }
 }
