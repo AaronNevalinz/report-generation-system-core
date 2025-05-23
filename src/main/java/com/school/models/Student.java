@@ -1,7 +1,7 @@
 package com.school.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -13,17 +13,19 @@ public class Student {
     private Long id;
     private String name;
 
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // Ignored when returning...
     @ManyToOne
     @JoinColumn(name = "class_id")
-    @JsonIgnore
-    private ClassEntity classEntity;
+    private SchoolClass classEntity;
 
-    @OneToMany(mappedBy = "student")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) //Ignored when returning...
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     List<Marks> marks;
 
 
     public Student() {}
-    public Student(String name, ClassEntity classEntity) {
+    public Student(String name, SchoolClass classEntity) {
         this.name = name;
         this.classEntity = classEntity;
     }
@@ -44,11 +46,11 @@ public class Student {
         this.name = name;
     }
 
-    public ClassEntity getClassEntity() {
+    public SchoolClass getClassEntity() {
         return classEntity;
     }
 
-    public void setClassEntity(ClassEntity classEntity) {
+    public void setClassEntity(SchoolClass classEntity) {
         this.classEntity = classEntity;
     }
 

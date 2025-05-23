@@ -2,57 +2,31 @@ package com.school.models;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.util.List;
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 public class Teacher {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long teacher_id;
     private String name;
+    private String passwordHash;
 
-    @ManyToMany
-    @JoinTable(
-            name = "teacher_subject_allocations",
-            joinColumns = @JoinColumn(name = "teacher_id"),
-            inverseJoinColumns = @JoinColumn(name = "subject_id"),
-            uniqueConstraints = @UniqueConstraint(columnNames = {"subject_id", "teacher_id"})
-    )
-    @JsonManagedReference
-    private List<Subject> subjects;
+    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL)
+    private List<Exam> exams;
 
-    public Teacher() {}
+    @OneToMany(mappedBy = "enteredBy", cascade = CascadeType.ALL)
+    List<Marks> marks;
 
-    public Teacher(String name) {
-        this.name = name;
-    }
+//    @OneToMany(mappedBy = "approvedBy", cascade = CascadeType.ALL)
+//    List<Report> reports;
 
-    public Long getTeacher_id() {
-        return teacher_id;
-    }
-
-    public void setTeacher_id(Long teacher_id) {
-        this.teacher_id = teacher_id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<Subject> getSubjects() {
-        return subjects;
-    }
-
-    public void setSubjects(List<Subject> subjects) {
-        this.subjects = subjects;
-    }
-
-    public void addSubject(Subject subject) {
-        this.subjects.add(subject);
-        subject.getTeachers().add(this);
-    }
 }

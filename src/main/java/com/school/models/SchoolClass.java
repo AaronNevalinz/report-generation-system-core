@@ -1,28 +1,30 @@
 package com.school.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.util.List;
 
 @Entity
 @Table(name = "classes")
-public class ClassEntity {
+public class SchoolClass {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
 
-    @OneToMany(mappedBy = "classEntity")
-    @JsonBackReference
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @OneToMany(mappedBy = "classEntity", cascade = CascadeType.ALL)
     private List<Student> students;
 
-    @OneToMany(mappedBy = "classEntity")
-    @JsonBackReference
+    @OneToMany(mappedBy = "classEntity", cascade = CascadeType.ALL)
     private List<Exam> exams;
     
-    public ClassEntity() {}
-    public ClassEntity(String name) {
+    public SchoolClass() {}
+    public SchoolClass(String name) {
         this.name = name;
     }
 

@@ -1,20 +1,28 @@
 package com.school.models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDate;
 
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
-public class Marks {
+public class Report {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private Double marksObtained;
+    private Long reportId;
+
+    private Double totalScore;
+    private Double average;
+    private String grade;
+    private Integer position;
+
 
     @ManyToOne
     @JoinColumn(name = "student_id")
@@ -25,14 +33,10 @@ public class Marks {
     private Exam exam;
 
     @ManyToOne
-    @JoinColumn(name = "entered_by")
-    private Teacher enteredBy;
+    @JoinColumn(name = "class_id")
+    private SchoolClass classEntity;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @ManyToOne
-    @JoinColumn(name = "subject_id")
-    private Subject subject;
+    private LocalDate generatedAt = LocalDate.now();
 
-    public Marks() {}
 
 }

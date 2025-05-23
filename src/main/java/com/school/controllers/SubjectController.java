@@ -2,30 +2,31 @@ package com.school.controllers;
 
 import com.school.models.Subject;
 import com.school.services.SubjectService;
+import com.school.utils.OperationReturnObject;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("api/v1/subjects")
 public class SubjectController {
     private final SubjectService subjectService;
-    public SubjectController(SubjectService subjectService) {
-        this.subjectService = subjectService;
-    }
-    @GetMapping("/{id}")
-    public Optional<Subject> getSubjectById(@PathVariable Long id) {
-        return subjectService.getSubjectById(id);
+
+    @PostMapping()
+    public OperationReturnObject createSubject(@RequestBody Subject subjectRequest) {
+        Subject savedSubject = subjectService.saveSubject(subjectRequest);
+        OperationReturnObject operationReturnObject = new OperationReturnObject();
+        operationReturnObject.setCodeAndMessageAndReturnObject(201, "Subject Created Successfully", savedSubject);
+        return operationReturnObject;
     }
 
-    @PostMapping("/add")
-    public Subject addSubject(@RequestParam String name) {
-        return subjectService.addSubject(name);
-    }
-
-    @GetMapping
-    public List<Subject> getAllSubjects() {
-        return subjectService.getAllSubjects();
+    @GetMapping()
+    public OperationReturnObject getAllSubjects() {
+        List<Subject> subjects = subjectService.getAllSubjects();
+        OperationReturnObject operationReturnObject = new OperationReturnObject();
+        operationReturnObject.setCodeAndMessageAndReturnObject(200, "All Subjects", subjects);
+        return operationReturnObject;
     }
 }
