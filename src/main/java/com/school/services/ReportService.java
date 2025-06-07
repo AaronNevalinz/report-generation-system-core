@@ -13,16 +13,24 @@ import com.school.Repository.StudentRepository;
 import com.school.models.Exam;
 import com.school.models.Marks;
 import com.school.models.Student;
+import com.school.payload.JasperReportDTO;
 import com.school.payload.ReportDto;
+import com.school.payload.StudentScoreDto;
 import com.school.payload.SubjectMarkDTO;
+import com.school.utils.ReportUtil;
 import lombok.AllArgsConstructor;
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @AllArgsConstructor
 @Service
@@ -72,7 +80,7 @@ public class ReportService {
         double average = marks.isEmpty() ? 0 : total/marks.size();
 
         ReportDto report = new ReportDto();
-        report.setStudentName(student.getName());
+        report.setStudentName(student.getFirstName());
         report.setClassName(student.getClassEntity().getName());
         report.setExamName(exam.getName());
         report.setSubjectMarks(subjectMarks);
@@ -135,5 +143,49 @@ public class ReportService {
         if(average >= 50){return "Good effort";}
         if(average >= 40){return "Fair";}
         return "Needs Improvement";
+    }
+
+    public byte[] generateReportFromJasper(Long studentId) {
+        String jasperFilePath = "/home/aaronnevalinz/data/java/school_management_system_api/src/main/resources/templates/template.jasper";
+
+        if(!studentRepository.existsById(studentId)) {
+            throw new IllegalArgumentException("Student not found");
+        }
+        Student student = studentRepository.findById(studentId).get();
+
+        
+        JasperReportDTO jasperReportDTO = new JasperReportDTO();
+        jasperReportDTO.setStudentName(student.getFirstName());
+        jasperReportDTO.setSchoolEmail("aaronnevalinz@gmail.com");
+        jasperReportDTO.setAddress("Plot 44-56 Manyago road");
+        jasperReportDTO.setPostalCode("206, Entebbe - Uganda");
+        jasperReportDTO.setSchoolTel("256-414-323266");
+        jasperReportDTO.setSchoolName("ENTEBBE SECONDARY SCHOOL");
+        jasperReportDTO.setStudentClass(student.getClassEntity().getName());
+
+        List<JasperReportDTO> jasperReportDTOList = new ArrayList<>();
+        jasperReportDTOList.add(jasperReportDTO);
+
+//        get the marks obtained from the database for specific student
+        List<Marks> marks = marksRepository.findByStudentIdAndExamId(studentId, 12L);
+        List<StudentScoreDto> studentScoreDtoList = new ArrayList<>();
+        for(Marks mark : marks){
+            StudentScoreDto studentScoreDto = new StudentScoreDto();
+            studentScoreDto.setSubjectName(mark.getSubject().getName());
+            studentScoreDto.setMidTermResults(mark.getMarksObtained());
+            studentScoreDto.setEndTermResults(mark.getMarksObtained());
+            studentScoreDto.setTeacherComment("Average performance strive harder");
+            studentScoreDtoList.add(studentScoreDto);
+        }
+
+        Map<String, Object> parameters = new HashMap<>();
+        JRDataSource studentScoresDataSource = new JRBeanCollectionDataSource(studentScoreDtoList);
+        parameters.put("TABLE_DATA_SOURCE", studentScoresDataSource);
+
+        try {
+            return ReportUtil.generateReport(jasperReportDTOList, jasperFilePath, parameters);
+        } catch (JRException | IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

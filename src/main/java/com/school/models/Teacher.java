@@ -1,6 +1,7 @@
 package com.school.models;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,13 +21,16 @@ public class Teacher {
     private String name;
     private String passwordHash;
 
-    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL)
-    private List<Exam> exams;
-
-    @OneToMany(mappedBy = "enteredBy", cascade = CascadeType.ALL)
-    List<Marks> marks;
+//    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL)
+//    private List<Exam> exams;
+//
+//    @OneToMany(mappedBy = "enteredBy", cascade = CascadeType.ALL)
+//    List<Marks> marks;
 
 //    @OneToMany(mappedBy = "approvedBy", cascade = CascadeType.ALL)
 //    List<Report> reports;
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @ManyToOne
+    @JoinColumn(name = "school_id", nullable = false)
+    private School school;
 }

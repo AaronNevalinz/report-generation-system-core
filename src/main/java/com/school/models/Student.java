@@ -1,18 +1,39 @@
 package com.school.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.util.Date;
 import java.util.List;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
-
+    private String firstName;
+    private String lastName;
+    private String fatherName;
+    private Date dateOfBirth;
+    private String gender;
+    private String imageUrl;
+    private String email;
+    private String phoneNumber;
+    private String address;
+    private String city;
+    private String guardianName;
+    private String guardianPhoneNumber;
+    private String guardianAddress;
+    private String guardianCity;
+    private String guardianRelation;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // Ignored when returning...
     @ManyToOne
@@ -23,42 +44,7 @@ public class Student {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     List<Marks> marks;
 
-
-    public Student() {}
-    public Student(String name, SchoolClass classEntity) {
-        this.name = name;
-        this.classEntity = classEntity;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public SchoolClass getClassEntity() {
-        return classEntity;
-    }
-
-    public void setClassEntity(SchoolClass classEntity) {
-        this.classEntity = classEntity;
-    }
-
-    public List<Marks> getMarks() {
-        return marks;
-    }
-
-    public void setMarks(List<Marks> marks) {
-        this.marks = marks;
-    }
+    @ManyToOne
+    @JoinColumn(name = "school_id", nullable = false)
+    private School school;
 }

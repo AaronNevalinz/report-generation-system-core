@@ -1,5 +1,6 @@
 package com.school.payload;
 
+import com.school.models.enums.ClassLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ReportDto {
     private String studentName;
-    private String className;
+    private ClassLevel className;
     private String examName;
     private List<SubjectMarkDTO> subjectMarks;
     private Double totalScore;

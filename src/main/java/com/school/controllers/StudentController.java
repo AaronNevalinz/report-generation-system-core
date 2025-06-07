@@ -22,7 +22,7 @@ public class StudentController {
 
         Map<String, Object> responseData = new HashMap<>();
         responseData.put("studentId", savedStudent.getId());
-        responseData.put("name", savedStudent.getName());
+        responseData.put("name", savedStudent.getFirstName());
 
         OperationReturnObject returnObject = new OperationReturnObject();
         returnObject.setCodeAndMessageAndReturnObject(201, "Created a Student", responseData);
